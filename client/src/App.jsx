@@ -14,6 +14,8 @@ import Home from "./pages/Home";
 import Register from "./pages/Registration";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import CreateTicket from "./pages/CreateTicket";
+import MyTickets from "./pages/MyTickets";
 import { ToastContainer } from "react-toastify";
 
  const ProtectedRoute = () => {
@@ -38,6 +40,8 @@ function App() {
           <Route path="/" element={<Home />}></Route>
           <Route path="/register" element={<Register />}></Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/create-ticket" element={<CreateTicket />}></Route>
+          <Route path="/my-tickets" element={<MyTickets />}></Route>
         </Routes>
       </BrowserRouter>
     </>

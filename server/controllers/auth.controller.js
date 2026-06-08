@@ -35,11 +35,16 @@ export const login = async (req,res) => {
         password
       );
 
-    const token =
-      generateToken(user);
+    const token = generateToken(user);
+
+      res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     success(res, "Login successful", {
-      token,
       user: {
         id: user._id,
         name: user.name,

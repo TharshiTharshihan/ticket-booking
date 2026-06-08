@@ -3,10 +3,7 @@ from "../services/ticketService.js";
 
 
 
-export const createTicket = async (
-  req,
-  res
-) => {
+export const createTicket = async (req, res) => {
   try {
 
     const ticket =
