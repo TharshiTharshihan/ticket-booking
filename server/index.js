@@ -5,6 +5,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import authRoute from "./routes/auth.route.js";
 import ticketRoute from "./routes/ticket.route.js";
+import userRoute from "./routes/user.route.js";
 import "./config/db.js";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 app.use("/api/tickets", ticketRoute);
+app.use("/api/users", userRoute);
 
 const PORT = process.env.PORT || 5000;
 

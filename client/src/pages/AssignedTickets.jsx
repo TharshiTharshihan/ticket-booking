@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { AlertCircle, Clock, Search, Ticket, User, X } from "lucide-react";
 import UserLayout from "../layouts/UserLayout";
-import { getAllTickets, updateTicket } from "../api/ticketApi";
-import { getUsers } from "../api/userApi";
+import { getAssignedTickets, updateTicket } from "../api/ticketApi";
+import { getUser } from "../utils/auth";
 import { toast } from "react-toastify";
 
 const statusColor = {
@@ -20,13 +20,16 @@ const priorityColor = {
 
 const statusOptions = ["Open", "In Progress", "Resolved", "Closed"];
 
-const AllTickets = () => {
+const AssignedTickets = () => {
+  const currentUser = getUser();
+  const currentUserId = currentUser?.id ?? currentUser?._id;
+  const currentUserName = currentUser?.name ?? "Agent";
+
   const [search, setSearch] = useState("");
   const [tickets, setTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
-  const [agents, setAgents] = useState([]);
-  const [assignmentDrafts, setAssignmentDrafts] = useState({});
   const [statusDrafts, setStatusDrafts] = useState({});
+  const [commentText, setCommentText] = useState("");
   const [savingTicketId, setSavingTicketId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -37,120 +40,24 @@ const AllTickets = () => {
         setLoading(true);
         setError("");
 
-        const response = await getAllTickets();
+        if (!currentUserId) {
+          setTickets([]);
+          return;
+        }
+
+        const response = await getAssignedTickets(currentUserId);
         setTickets(response.data.data || []);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load tickets");
+        setError(
+          err.response?.data?.message || "Failed to load assigned tickets",
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchTickets();
-  }, []);
-
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const response = await getUsers(1, "agent", 1000);
-        setAgents(response.data.data.users || []);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchAgents();
-  }, []);
-
-  const resolveAssignedAgent = (assignedTo) => {
-    if (!assignedTo) {
-      return {
-        id: "",
-        name: "Not assigned",
-      };
-    }
-
-    if (typeof assignedTo === "object") {
-      return {
-        id: assignedTo.id ?? assignedTo._id ?? "",
-        name: assignedTo.name ?? "Assigned",
-      };
-    }
-
-    return {
-      id: assignedTo,
-      name: "Assigned",
-    };
-  };
-
-  const handleAssignmentChange = (ticketId, agentId) => {
-    setAssignmentDrafts((prevDrafts) => ({
-      ...prevDrafts,
-      [ticketId]: agentId,
-    }));
-  };
-
-  const handleStatusChange = (ticketId, status) => {
-    setStatusDrafts((prevDrafts) => ({
-      ...prevDrafts,
-      [ticketId]: status,
-    }));
-  };
-
-  const handleUpdateTicket = async (ticket) => {
-    const selectedAgentId =
-      assignmentDrafts[ticket._id] ??
-      resolveAssignedAgent(ticket.assignedTo).id;
-
-    const selectedStatus = statusDrafts[ticket._id] ?? ticket.status;
-
-    if (!selectedAgentId) {
-      return;
-    }
-
-    const selectedAgent = agents.find((agent) => agent._id === selectedAgentId);
-
-    if (!selectedAgent) {
-      return;
-    }
-
-    try {
-      setSavingTicketId(ticket._id);
-
-      const response = await updateTicket(ticket._id, {
-        status: selectedStatus,
-        assignedTo: {
-          id: selectedAgent._id,
-          name: selectedAgent.name,
-        },
-      });
-
-      const updatedTicket = response.data.data;
-
-      setTickets((prevTickets) =>
-        prevTickets.map((currentTicket) =>
-          currentTicket._id === updatedTicket._id
-            ? updatedTicket
-            : currentTicket,
-        ),
-      );
-
-      setSelectedTicket((currentTicket) =>
-        currentTicket?._id === updatedTicket._id
-          ? updatedTicket
-          : currentTicket,
-      );
-
-      toast.success("Ticket assignment updated successfully", {
-        theme: "dark",
-      });
-      setSelectedTicket(null);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setSavingTicketId("");
-    }
-  };
+  }, [currentUserId]);
 
   const filteredTickets = tickets.filter((ticket) => {
     const query = search.toLowerCase();
@@ -171,6 +78,107 @@ const AllTickets = () => {
     (ticket) => ticket.status === "Closed",
   ).length;
 
+  const resolveAssignedName = (assignedTo) => {
+    if (!assignedTo) {
+      return currentUserName;
+    }
+
+    if (typeof assignedTo === "object") {
+      return assignedTo.name || currentUserName;
+    }
+
+    return currentUserName;
+  };
+
+  const handleStatusChange = (ticketId, status) => {
+    setStatusDrafts((prevDrafts) => ({
+      ...prevDrafts,
+      [ticketId]: status,
+    }));
+  };
+
+  const handleUpdateStatus = async (ticket) => {
+    const selectedStatus = statusDrafts[ticket._id] ?? ticket.status;
+
+    if (!selectedStatus) {
+      return;
+    }
+
+    try {
+      setSavingTicketId(ticket._id);
+
+      const response = await updateTicket(ticket._id, {
+        status: selectedStatus,
+      });
+
+      const updatedTicket = response.data.data;
+
+      setTickets((prevTickets) =>
+        prevTickets.map((currentTicket) =>
+          currentTicket._id === updatedTicket._id
+            ? updatedTicket
+            : currentTicket,
+        ),
+      );
+
+      setSelectedTicket(updatedTicket);
+      toast.success("Ticket status updated successfully", {
+        theme: "dark",
+      });
+      setSelectedTicket(null);
+    } catch (err) {
+      console.log(err);
+      toast.error(
+        err.response?.data?.message || "Failed to update ticket status",
+        { theme: "dark" },
+      );
+    } finally {
+      setSavingTicketId("");
+    }
+  };
+
+  const handleAddComment = async () => {
+    const text = commentText.trim();
+
+    if (!selectedTicket || !text) {
+      return;
+    }
+
+    try {
+      setSavingTicketId(selectedTicket._id);
+
+      const response = await updateTicket(selectedTicket._id, {
+        comment: {
+          text,
+          createdBy: currentUserId,
+          createdByName: currentUserName,
+        },
+      });
+
+      const updatedTicket = response.data.data;
+
+      setTickets((prevTickets) =>
+        prevTickets.map((currentTicket) =>
+          currentTicket._id === updatedTicket._id
+            ? updatedTicket
+            : currentTicket,
+        ),
+      );
+
+      setSelectedTicket(updatedTicket);
+      setCommentText("");
+      toast.success("Comment added successfully", { theme: "dark" });
+      setSelectedTicket(null);
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || "Failed to add comment", {
+        theme: "dark",
+      });
+    } finally {
+      setSavingTicketId("");
+    }
+  };
+
   return (
     <UserLayout>
       <div className="space-y-6">
@@ -179,11 +187,10 @@ const AllTickets = () => {
             <div>
               <div className="flex items-center gap-3">
                 <Ticket size={36} />
-                <h1 className="text-4xl font-bold">All Tickets</h1>
+                <h1 className="text-4xl font-bold">Assigned Tickets</h1>
               </div>
               <p className="mt-3 text-orange-100 max-w-2xl">
-                Review every ticket stored in the database, track status, and
-                inspect the full request details.
+                Tickets currently assigned to you are shown here.
               </p>
             </div>
 
@@ -224,13 +231,13 @@ const AllTickets = () => {
 
         {loading ? (
           <div className="bg-white rounded-3xl shadow p-12 text-center text-slate-500">
-            Loading tickets...
+            Loading assigned tickets...
           </div>
         ) : error ? (
           <div className="bg-white rounded-3xl shadow p-12 text-center">
             <AlertCircle className="mx-auto text-red-400" size={56} />
             <h2 className="mt-4 text-2xl font-bold text-slate-700">
-              Could not load tickets
+              Could not load assigned tickets
             </h2>
             <p className="mt-2 text-slate-500">{error}</p>
           </div>
@@ -238,16 +245,16 @@ const AllTickets = () => {
           <div className="bg-white rounded-3xl shadow p-16 text-center">
             <Ticket size={60} className="mx-auto text-orange-300" />
             <h2 className="mt-4 text-2xl font-bold text-gray-700">
-              No Tickets Found
+              No Assigned Tickets Found
             </h2>
             <p className="text-gray-500 mt-2">
               {search
                 ? "Try a different search term."
-                : "There are no tickets saved in the database yet."}
+                : "There are no tickets assigned to your account yet."}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredTickets.map((ticket) => (
               <div
                 key={ticket._id}
@@ -289,9 +296,7 @@ const AllTickets = () => {
 
                   <div className="flex items-center gap-2">
                     <User size={15} />
-                    <span className="truncate">
-                      {resolveAssignedAgent(ticket.assignedTo).name}
-                    </span>
+                    <span className="truncate">{ticket.userName}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -314,7 +319,7 @@ const AllTickets = () => {
 
                 <button
                   onClick={() => setSelectedTicket(ticket)}
-                  className="w-full mt-5 bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-600 transition-colors cursor-pointer"
+                  className="w-full mt-5 bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-600 transition-colors"
                 >
                   View Details
                 </button>
@@ -325,12 +330,12 @@ const AllTickets = () => {
 
         {selectedTicket && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl w-full max-w-2xl p-6 fixed z-0  max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-3xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setSelectedTicket(null)}
-                className="absolute  top-4 right-4  text-slate-500 hover:text-slate-800"
+                className="absolute top-4 right-4 text-slate-500 hover:text-slate-800"
               >
-                <X size={28} />
+                <X size={22} />
               </button>
 
               <div className="pr-8">
@@ -347,7 +352,7 @@ const AllTickets = () => {
                 <div className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-sm text-slate-500">Status</p>
                   <p
-                    className={`mt-1 font-semibold rounded-2xl px-3 py-1 w-fit  ${statusColor[selectedTicket.status] || "text-slate-700"}`}
+                    className={`mt-1 font-semibold rounded-3xl w-fit px-3 py-1 ${statusColor[selectedTicket.status] || "text-slate-700"}`}
                   >
                     {selectedTicket.status}
                   </p>
@@ -409,34 +414,9 @@ const AllTickets = () => {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Assign Agent
-                  </label>
-
-                  <select
-                    value={
-                      assignmentDrafts[selectedTicket._id] ??
-                      resolveAssignedAgent(selectedTicket.assignedTo).id
-                    }
-                    onChange={(e) =>
-                      handleAssignmentChange(selectedTicket._id, e.target.value)
-                    }
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  >
-                    <option value="">Select an agent</option>
-
-                    {agents.map((agent) => (
-                      <option key={agent._id} value={agent._id}>
-                        {agent.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <button
                   type="button"
-                  onClick={() => handleUpdateTicket(selectedTicket)}
+                  onClick={() => handleUpdateStatus(selectedTicket)}
                   disabled={savingTicketId === selectedTicket._id}
                   className="w-full bg-orange-500 text-white py-3 rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
@@ -444,6 +424,34 @@ const AllTickets = () => {
                     ? "Updating..."
                     : "Update"}
                 </button>
+
+                <div className="pt-4">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Add Comment
+                  </label>
+
+                  <textarea
+                    rows="4"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Write a comment for the user..."
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={handleAddComment}
+                    disabled={
+                      !commentText.trim() ||
+                      savingTicketId === selectedTicket._id
+                    }
+                    className="w-full mt-3 bg-slate-800 text-white py-3 rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {savingTicketId === selectedTicket._id
+                      ? "Saving..."
+                      : "Add Comment"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -453,4 +461,4 @@ const AllTickets = () => {
   );
 };
 
-export default AllTickets;
+export default AssignedTickets;

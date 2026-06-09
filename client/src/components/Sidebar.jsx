@@ -10,16 +10,26 @@ import {
 } from "lucide-react";
 
 import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "../api/authApi";
+import { getUser } from "../utils/auth";
 
 const Sidebar = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getUser();
 
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
+  const logout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsOpen(false);
+      navigate("/login");
+    }
   };
 
   const closeSidebar = () => setIsOpen(false);
@@ -63,7 +73,7 @@ const Sidebar = () => {
 
         {/* Navigation */}
 
-        {user.role === "admin" ? (
+        {user?.role === "admin" ? (
           <nav className="flex-1 p-4 space-y-3">
             <Link
               to="/dashboard"
@@ -82,8 +92,14 @@ const Sidebar = () => {
               <PlusCircle />
               All Tickets
             </Link>
-
-           
+            <Link
+              to="/all-users"
+              onClick={closeSidebar}
+              className="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-100"
+            >
+              <PlusCircle />
+              All Users
+            </Link>
 
             <Link
               to="/profile"
@@ -94,7 +110,7 @@ const Sidebar = () => {
               Profile
             </Link>
           </nav>
-        ) : user.role === "user" ? (
+        ) : user?.role === "user" ? (
           <nav className="flex-1 p-4 space-y-3">
             <Link
               to="/dashboard"
@@ -144,21 +160,12 @@ const Sidebar = () => {
             </Link>
 
             <Link
-              to="/create-ticket"
-              onClick={closeSidebar}
-              className="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-100"
-            >
-              <PlusCircle />
-              Create Ticket
-            </Link>
-
-            <Link
-              to="/my-tickets"
+              to="/assigned-tickets"
               onClick={closeSidebar}
               className="flex items-center gap-3 p-3 rounded-xl hover:bg-orange-100"
             >
               <Ticket />
-              My Tickets
+              Assigned Tickets
             </Link>
 
             <Link

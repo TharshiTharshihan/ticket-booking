@@ -11,3 +11,7 @@ export const registerUser = (userData) => {
 export const loginUser = (userData) => {
   return API.post("/login", userData);
 };
+
+export const logoutUser = () => {
+  return API.post("/logout", {}, { withCredentials: true });
+};

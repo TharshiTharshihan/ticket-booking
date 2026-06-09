@@ -40,8 +40,14 @@ export const getAllTickets = async (req, res) => {
 //
 export const getMyTickets = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log("user id is : ", userId);
+    const userId = req.params.userId || req.query.userId || req.body?.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
 
     const tickets = await ticketService.getMyTicketsService(userId);
 
@@ -83,6 +89,17 @@ export const getTicketById = async (req, res) => {
 
 export const updateTicket = async (req, res) => {
   try {
+    // if (req.body?.assignedTo && req.user?.role !== "admin") {
+    //    console.log(req.user);
+    // console.log(req.body);
+
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Only admin can assign agents",
+    //   });
+
+    // }
+
     const ticket = await ticketService.updateTicketService(
       req.params.id,
       req.body,
@@ -99,6 +116,33 @@ export const updateTicket = async (req, res) => {
       success: true,
       message: "Ticket updated",
       data: ticket,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//
+export const getAssignedTickets = async (req, res) => {
+  try {
+    const agentId =
+      req.params.agentId || req.query.agentId || req.body?.agentId;
+
+    if (!agentId) {
+      return res.status(400).json({
+        success: false,
+        message: "Agent ID is required",
+      });
+    }
+
+    const tickets = await ticketService.getAssignedTicketsService(agentId);
+
+    res.status(200).json({
+      success: true,
+      data: tickets,
     });
   } catch (error) {
     res.status(500).json({

@@ -12,11 +12,17 @@ router.get(
   ticketController.getMyTickets,
 );
 
+router.get(
+  "/assigned/:agentId",
+
+  ticketController.getAssignedTickets,
+);
+
 router.get("/all", ticketController.getAllTickets);
 
 router.get("/:id", verifyToken, ticketController.getTicketById);
 
-router.put("/:id", verifyToken, ticketController.updateTicket);
+router.put("/:id", ticketController.updateTicket);
 
 router.delete("/:id", verifyToken, ticketController.deleteTicket);
 

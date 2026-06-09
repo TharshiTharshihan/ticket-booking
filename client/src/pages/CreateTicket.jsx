@@ -1,37 +1,30 @@
 import { useState } from "react";
-import {
-  Ticket,
-  FileText,
-  AlertCircle,
-  Layers,
-} from "lucide-react";
+import { Ticket, FileText, AlertCircle, Layers } from "lucide-react";
 import UserLayout from "../layouts/UserLayout";
 import { toast } from "react-toastify";
 import { createTicket } from "../api/ticketApi";
-
+import { getUser } from "../utils/auth";
 
 const CreateTicket = () => {
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
+  const user = getUser();
+  const userId = user?.id ?? user?._id;
+  const userName = user?.name;
 
   const [formData, setFormData] = useState({
     category: "",
     priority: "",
     title: "",
     description: "",
-    userId: user.id,
-    userName: user.name,
+    userId,
+    userName,
   });
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -44,9 +37,11 @@ const CreateTicket = () => {
       !formData.title ||
       !formData.description
     ) {
-      return toast.error(
-        "Please fill all fields"
-      );
+      return toast.error("Please fill all fields");
+    }
+
+    if (!userId || !userName) {
+      return toast.error("User session not found. Please log in again.");
     }
 
     try {
@@ -54,27 +49,21 @@ const CreateTicket = () => {
 
       await createTicket(formData);
 
-      toast.success(
-        "Ticket Created Successfully"
-      );
+      toast.success("Ticket Created Successfully");
 
       setFormData({
         category: "",
         priority: "",
         title: "",
         description: "",
-        userId: user.id,
-        userName: user.name,
+        userId,
+        userName,
       });
-      console.log('====================================');
+      console.log("====================================");
       console.log(formData);
-      console.log('====================================');
-
+      console.log("====================================");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to create ticket"
-      );
+      toast.error(error.response?.data?.message || "Failed to create ticket");
     } finally {
       setLoading(false);
     }
@@ -82,23 +71,18 @@ const CreateTicket = () => {
 
   return (
     <UserLayout>
-      <div className="max-w-4xl mx-auto">
-
+      <div className=" mx-auto">
         {/* Header */}
 
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-3xl p-8 shadow-lg">
-
+        <div className="bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-3xl p-8 shadow-lg">
           <div className="flex items-center gap-4">
             <Ticket size={40} />
 
             <div>
-              <h1 className="text-3xl font-bold">
-                Create New Ticket
-              </h1>
+              <h1 className="text-3xl font-bold">Create New Ticket</h1>
 
               <p className="text-orange-100 mt-1">
-                Describe your issue and our
-                support team will assist you.
+                Describe your issue and our support team will assist you.
               </p>
             </div>
           </div>
@@ -107,21 +91,13 @@ const CreateTicket = () => {
         {/* Form */}
 
         <div className="bg-white rounded-3xl shadow-lg mt-6 p-8">
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6"
-          >
-
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Category */}
 
             <div>
-              <label className="font-semibold text-slate-700">
-                Category
-              </label>
+              <label className="font-semibold text-slate-700">Category</label>
 
               <div className="relative mt-2">
-
                 <Layers
                   className="absolute left-4 top-4 text-slate-400"
                   size={20}
@@ -133,34 +109,19 @@ const CreateTicket = () => {
                   onChange={handleChange}
                   className="w-full border border-slate-200 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-orange-500"
                 >
-                  <option value="">
-                    Select Category
-                  </option>
+                  <option value="">Select Category</option>
 
-                  <option value="Payment Issue">
-                    Payment Issue
-                  </option>
+                  <option value="Payment Issue">Payment Issue</option>
 
-                  <option value="Booking Issue">
-                    Booking Issue
-                  </option>
+                  <option value="Booking Issue">Booking Issue</option>
 
-                  <option value="Refund Request">
-                    Refund Request
-                  </option>
+                  <option value="Refund Request">Refund Request</option>
 
-                  <option value="Account Issue">
-                    Account Issue
-                  </option>
+                  <option value="Account Issue">Account Issue</option>
 
-                  <option value="Technical Issue">
-                    Technical Issue
-                  </option>
+                  <option value="Technical Issue">Technical Issue</option>
 
-                  <option value="Other">
-                    Other
-                  </option>
-
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -168,12 +129,9 @@ const CreateTicket = () => {
             {/* Priority */}
 
             <div>
-              <label className="font-semibold text-slate-700">
-                Priority
-              </label>
+              <label className="font-semibold text-slate-700">Priority</label>
 
               <div className="relative mt-2">
-
                 <AlertCircle
                   className="absolute left-4 top-4 text-slate-400"
                   size={20}
@@ -185,22 +143,13 @@ const CreateTicket = () => {
                   onChange={handleChange}
                   className="w-full border border-slate-200 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-orange-500"
                 >
-                  <option value="">
-                    Select Priority
-                  </option>
+                  <option value="">Select Priority</option>
 
-                  <option value="Low">
-                    Low
-                  </option>
+                  <option value="Low">Low</option>
 
-                  <option value="Medium">
-                    Medium
-                  </option>
+                  <option value="Medium">Medium</option>
 
-                  <option value="High">
-                    High
-                  </option>
-
+                  <option value="High">High</option>
                 </select>
               </div>
             </div>
@@ -208,12 +157,9 @@ const CreateTicket = () => {
             {/* Title */}
 
             <div>
-              <label className="font-semibold text-slate-700">
-                Title
-              </label>
+              <label className="font-semibold text-slate-700">Title</label>
 
               <div className="relative mt-2">
-
                 <Ticket
                   className="absolute left-4 top-4 text-slate-400"
                   size={20}
@@ -238,7 +184,6 @@ const CreateTicket = () => {
               </label>
 
               <div className="relative mt-2">
-
                 <FileText
                   className="absolute left-4 top-4 text-slate-400"
                   size={20}
@@ -262,11 +207,8 @@ const CreateTicket = () => {
               disabled={loading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-semibold transition"
             >
-              {loading
-                ? "Creating Ticket..."
-                : "Create Ticket"}
+              {loading ? "Creating Ticket..." : "Create Ticket"}
             </button>
-
           </form>
         </div>
       </div>

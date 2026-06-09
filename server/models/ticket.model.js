@@ -32,7 +32,7 @@ const ticketSchema = new mongoose.Schema(
       default: "Open",
     },
 
-      userId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -43,14 +43,46 @@ const ticketSchema = new mongoose.Schema(
     },
 
     assignedTo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
+
+      name: {
+        type: String,
+        default: "",
+      },
     },
+
+    comments: [
+      {
+        text: {
+          type: String,
+          required: true,
+        },
+
+        createdBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+
+        createdByName: {
+          type: String,
+          required: true,
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Ticket = mongoose.model("Ticket", ticketSchema);

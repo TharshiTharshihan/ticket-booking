@@ -10,7 +10,7 @@ import {
 import { registerUser } from "../api/authApi";
 
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 
 const Register = () => {
 
@@ -60,6 +60,10 @@ const handleSubmit = async (e) => {
     !formData.password ||
     !formData.confirmPassword
   ) {
+    toast.error(
+      "Please fill all required fields",
+      { theme: "dark" }
+    );
     return setError(
       "Please fill all required fields"
     );
@@ -69,9 +73,14 @@ const handleSubmit = async (e) => {
     formData.password !==
     formData.confirmPassword
   ) {
+    toast.error(
+      "Passwords do not match",
+      { theme: "dark" }
+    );
     return setError(
       "Passwords do not match"
     );
+    
   }
 
   try {
@@ -97,12 +106,21 @@ const handleSubmit = async (e) => {
       password: "",
       confirmPassword: "",
     });
-      navigate("/sign-in");
+      navigate("/dashboard");
+      toast.success(
+        "Registration successful! Welcome to TicketHub",
+        { theme: "dark" }
+      );
 
   } catch (err) {
     setError(
       err.response?.data?.message ||
       "Registration failed"
+    );
+    toast.error(
+      err.response?.data?.message ||
+      "Registration failed",
+      { theme: "dark" }
     );
     
   } finally {
