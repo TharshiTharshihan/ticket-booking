@@ -1,61 +1,50 @@
 import axios from "axios";
+import { getUser } from "../utils/auth";
 
-const API =
-  import.meta.env.VITE_API_URL + "/tickets" ||
-  "http://localhost:5000/api/tickets";
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
+const API = `${API_BASE}/tickets`;
 
 // Create Ticket
 export const createTicket = (ticketData) => {
-  return axios.post(
-    `${API}/create`,ticketData,
-    {
-      withCredentials: true,
-    }
-  );
+  return axios.post(`${API}/create`, ticketData, {
+    withCredentials: true,
+  });
+};
+
+//
+export const getAllTickets = () => {
+  return axios.get(`${API}/all`, {
+    withCredentials: true,
+  });
 };
 
 // Get Logged User Tickets
-export const getMyTickets = () => {
-  return axios.get(
-    `${API}/tickets/my`,
-    {
-      withCredentials: true,
-    }
-  );
+export const getMyTickets = (userId) => {
+  const currentUser = getUser();
+  const resolvedUserId = userId ?? currentUser?._id ?? currentUser?.id;
+
+  return axios.get(`${API}/my/${resolvedUserId}`, {
+    withCredentials: true,
+  });
 };
 
 // Get Single Ticket
 export const getTicketById = (ticketId) => {
-  return axios.get(
-    `${API}/tickets/${ticketId}`,
-    {
-      withCredentials: true,
-    }
-  );
+  return axios.get(`${API}/${ticketId}`, {
+    withCredentials: true,
+  });
 };
 
 // Update Ticket
-export const updateTicket = (
-  ticketId,
-  ticketData
-) => {
-  return axios.put(
-    `${API}/tickets/${ticketId}`,
-    ticketData,
-    {
-      withCredentials: true,
-    }
-  );
+export const updateTicket = (ticketId, ticketData) => {
+  return axios.put(`${API}/${ticketId}`, ticketData, {
+    withCredentials: true,
+  });
 };
 
 // Delete Ticket
-export const deleteTicket = (
-  ticketId
-) => {
-  return axios.delete(
-    `${API}/tickets/${ticketId}`,
-    {
-      withCredentials: true,
-    }
-  );
+export const deleteTicket = (ticketId) => {
+  return axios.delete(`${API}/${ticketId}`, {
+    withCredentials: true,
+  });
 };

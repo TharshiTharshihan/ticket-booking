@@ -11,11 +11,17 @@ import { createTicket } from "../api/ticketApi";
 
 
 const CreateTicket = () => {
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+
   const [formData, setFormData] = useState({
     category: "",
     priority: "",
     title: "",
     description: "",
+    userId: user.id,
+    userName: user.name,
   });
 
   const [loading, setLoading] =
@@ -57,7 +63,12 @@ const CreateTicket = () => {
         priority: "",
         title: "",
         description: "",
+        userId: user.id,
+        userName: user.name,
       });
+      console.log('====================================');
+      console.log(formData);
+      console.log('====================================');
 
     } catch (error) {
       toast.error(

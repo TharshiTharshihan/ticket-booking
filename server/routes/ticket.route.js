@@ -4,7 +4,20 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create",  verifyToken,ticketController.createTicket);
+router.post("/create", ticketController.createTicket);
 
+router.get(
+  "/my/:userId",
+
+  ticketController.getMyTickets,
+);
+
+router.get("/all", ticketController.getAllTickets);
+
+router.get("/:id", verifyToken, ticketController.getTicketById);
+
+router.put("/:id", verifyToken, ticketController.updateTicket);
+
+router.delete("/:id", verifyToken, ticketController.deleteTicket);
 
 export default router;

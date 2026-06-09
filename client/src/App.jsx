@@ -16,17 +16,15 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import CreateTicket from "./pages/CreateTicket";
 import MyTickets from "./pages/MyTickets";
+import AllTickets from "./pages/AllTickets";
 import { ToastContainer } from "react-toastify";
 
- const ProtectedRoute = () => {
-    const user = true;
-    return user ? <Outlet /> : <Navigate to="/login" />;
-  };
-
+const ProtectedRoute = () => {
+  const user = true;
+  return user ? <Outlet /> : <Navigate to="/login" />;
+};
 
 function App() {
-
- 
   return (
     <>
       <BrowserRouter>
@@ -42,6 +40,7 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/create-ticket" element={<CreateTicket />}></Route>
           <Route path="/my-tickets" element={<MyTickets />}></Route>
+          <Route path="/all-tickets" element={<AllTickets />}></Route>
         </Routes>
       </BrowserRouter>
     </>
