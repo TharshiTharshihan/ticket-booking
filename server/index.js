@@ -16,7 +16,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://127.0.0.1:5173",
-      "https://tickethub-9uor.onrender.com",
+     "https://ticket-booking-we7zrpzp5-tharshihan-s-projects.vercel.app",
     ],
     credentials: true,
   })
