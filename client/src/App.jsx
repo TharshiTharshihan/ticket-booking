@@ -19,6 +19,7 @@ import MyTickets from "./pages/MyTickets";
 import AllTickets from "./pages/AllTickets";
 import AssignedTickets from "./pages/AssignedTickets";
 import UserManagement from "./pages/AllUsers";
+import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
 
 const ProtectedRoute = () => {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/assigned-tickets" element={<AssignedTickets />}></Route>
           <Route path="/all-tickets" element={<AllTickets />}></Route>
           <Route path="/all-users" element={<UserManagement />}></Route>
+          <Route path="/profile" element={<Profile />}></Route>
         </Routes>
       </BrowserRouter>
     </>

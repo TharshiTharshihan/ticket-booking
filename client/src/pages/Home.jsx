@@ -1,199 +1,205 @@
-import React from "react";
 import {
-  ShoppingCart,
   Menu,
-  Star,
-  Smartphone,
-  PlayCircle,
-  Repeat,
-  CheckCircle,
-  ChefHat,
+  Ticket,
+  ShieldCheck,
+  Clock3,
+  CircleCheckBig,
+  Headphones,
+  Layers3,
   Search,
   ArrowRight,
+  Laptop,
 } from "lucide-react";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-slate-50 flex justify-center p-4">
-      <div className="w-full max-w-[1400px] bg-white rounded-2xl shadow-xl overflow-hidden border border-orange-100">
-        
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-350 overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-2xl shadow-slate-200/70">
         {/* Navbar */}
-        <header className="flex items-center justify-between px-4 sm:px-10 py-4 sm:py-6 border-b border-slate-100">
+        <header className="flex items-center justify-between border-b border-slate-100 px-4 py-4 sm:px-10 sm:py-6 bg-white/90 backdrop-blur">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-orange-500 grid place-content-center">
-              <ShoppingCart className="w-5 h-5 text-white" />
+            <div className="grid h-10 w-10 place-content-center rounded-2xl bg-linear-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/20">
+              <Ticket className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg sm:text-xl font-bold text-orange-600">
-              FreshCart
+            <span className="text-lg font-bold text-slate-800 sm:text-xl">
+              TicketHub
             </span>
           </div>
 
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
+          <nav className="hidden items-center gap-8 text-sm font-medium lg:flex">
             <a href="#" className="text-slate-600 hover:text-slate-900">
-              Premium Groceries
+              Raise Tickets
             </a>
             <a href="#" className="text-slate-600 hover:text-slate-900">
-              Meal Kits
+              Track Status
             </a>
             <a href="#" className="text-slate-600 hover:text-slate-900">
-              Express Delivery
+              Agent Assignment
             </a>
             <a href="#" className="text-slate-600 hover:text-slate-900">
-              Weekly Deals
+              SLA Monitoring
             </a>
             <a href="#" className="text-slate-600 hover:text-slate-900">
-              Customers
+              Analytics
             </a>
           </nav>
 
           <div className="flex items-center gap-2">
             <button className="lg:hidden p-2">
-              <Menu className="w-5 h-5 text-slate-600" />
+              <Menu className="h-5 w-5 text-slate-600" />
             </button>
 
-            <button className="bg-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition">
-                <a href="/login">
-              Login here
-                </a>
+            <button className="rounded-full bg-linear-to-r from-orange-500 to-amber-500 px-6 py-3 font-semibold text-white transition hover:opacity-95">
+              <a href="/login">Login here</a>
             </button>
           </div>
         </header>
 
         {/* Hero Section */}
-        <section className="flex flex-col items-center text-center px-4 sm:px-6 lg:px-10 py-10">
-          
-          {/* Reviews */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
-            <div className="flex -space-x-2">
-              <img
-                src="https://randomuser.me/api/portraits/women/32.jpg"
-                alt=""
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <img
-                src="https://randomuser.me/api/portraits/men/22.jpg"
-                alt=""
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <img
-                src="https://randomuser.me/api/portraits/women/65.jpg"
-                alt=""
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <img
-                src="https://randomuser.me/api/portraits/men/41.jpg"
-                alt=""
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-            </div>
+        <section className="relative flex flex-col items-center px-4 py-10 text-center sm:px-6 lg:px-10 lg:py-14">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(249,115,22,0.16),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(148,163,184,0.14),transparent_28%)]" />
 
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-4 h-4 text-amber-400 fill-amber-400"
-                />
-              ))}
-              <span className="ml-2 text-sm text-slate-600">
-                Trusted by 50,000+ families
-              </span>
+          {/* Reviews */}
+          <div className="relative z-10 flex flex-col gap-4 sm:flex-row items-center mb-8 rounded-full border border-orange-100 bg-white px-5 py-3 shadow-lg shadow-slate-200/70 backdrop-blur">
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+              Secure support workflows
+            </div>
+            <div className="hidden h-4 w-px bg-slate-200 sm:block" />
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Clock3 className="h-4 w-4 text-orange-400" />
+              Faster response times
+            </div>
+            <div className="hidden h-4 w-px bg-slate-200 sm:block" />
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Headphones className="h-4 w-4 text-sky-400" />
+              Built for agents and customers
             </div>
           </div>
 
-          <h1 className="max-w-5xl text-4xl md:text-6xl font-bold text-slate-800 leading-tight">
-            Premium{" "}
-            <span className="text-orange-600 ">
-              organic groceries
-            </span>{" "}
-            delivered to your doorstep in 30 minutes
+          <h1 className="relative z-10 max-w-5xl text-4xl font-bold leading-tight text-slate-800 md:text-6xl">
+            A professional ticketing workspace for managing issues, assignments,
+            and resolutions.
           </h1>
 
-          <p className="max-w-2xl mt-6 text-lg text-slate-600">
-            Experience the finest selection of farm-fresh produce,
-            artisanal goods, and everyday essentials.
+          <p className="relative z-10 mt-6 max-w-2xl text-lg text-slate-600">
+            Keep every customer request organized with clean dashboards, clear
+            ownership, and a streamlined support flow for your team.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-10">
-            <button className="flex items-center justify-center gap-2 bg-orange-500 text-white px-8 py-4 rounded-full font-semibold hover:bg-orange-600">
-              <Smartphone className="w-5 h-5" />
-              Get FreshCart App
+          <div className="relative z-10 flex flex-col gap-4 mt-10 sm:flex-row">
+            <button className="flex items-center justify-center gap-2 rounded-full bg-linear-to-r from-orange-500 to-amber-500 px-8 py-4 font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:opacity-95">
+              <Laptop className="h-5 w-5" />
+              Open Dashboard
             </button>
 
-            <button className="flex items-center justify-center gap-2 border-2 border-slate-200 px-8 py-4 rounded-full font-semibold text-slate-700">
-              <PlayCircle className="w-5 h-5" />
-              Watch Demo
+            <button className="flex items-center justify-center gap-2 rounded-full border border-slate-200 px-8 py-4 font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50">
+              <CircleCheckBig className="h-5 w-5" />
+              View Workflow
             </button>
           </div>
 
           {/* Hero Image */}
-          <div className="relative w-full mt-16">
+          <div className="relative z-10 mt-16 w-full">
             <img
-              src="https://images.unsplash.com/photo-1556745750-68295fefafc5?w=2160&q=80"
-              alt="Grocery"
-              className="w-full max-w-5xl mx-auto rounded-2xl h-[450px] object-cover shadow-2xl"
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=2160&q=80"
+              alt="Support team dashboard"
+              className="mx-auto h-112.5 w-full max-w-5xl rounded-3xl object-cover shadow-2xl shadow-slate-200/70"
             />
 
             {/* Left Card */}
-            <div className="absolute left-10 top-20 bg-white p-5 rounded-2xl shadow-xl w-56 hidden lg:block">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center">
-                  <Repeat className="w-5 h-5 text-white" />
+            <div className="absolute left-10 top-20 hidden w-60 rounded-2xl border border-slate-200 bg-white p-5 shadow-xl lg:block">
+              <div className="mb-3 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500">
+                  <Layers3 className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold">Smart Subscribe</h3>
-                  <p className="text-xs text-slate-500">
-                    by Madison Chen
-                  </p>
+                  <h3 className="font-bold text-slate-800">Smart Routing</h3>
+                  <p className="text-xs text-slate-500">by support ops</p>
                 </div>
               </div>
 
               <p className="text-sm text-slate-600">
-                Never run out of essentials again.
+                Automatically route tickets to the right agent or queue.
               </p>
 
-              <div className="flex items-center gap-2 mt-3 text-orange-600 text-sm">
-                <CheckCircle className="w-4 h-4" />
-                Save up to 25% monthly
+              <div className="mt-3 flex items-center gap-2 text-sm text-orange-600">
+                <CircleCheckBig className="h-4 w-4" />
+                Reduce response delays
               </div>
             </div>
 
             {/* Right Card */}
-            <div className="absolute right-10 top-32 bg-white p-5 rounded-2xl shadow-xl w-52 hidden lg:block">
-              <div className="flex justify-between mb-3">
+            <div className="absolute right-10 top-32 hidden w-56 rounded-2xl border border-slate-200 bg-white p-5 shadow-xl lg:block">
+              <div className="mb-3 flex justify-between">
                 <span className="text-xs uppercase text-slate-500">
-                  Chef's Recipe
+                  SLA Tracking
                 </span>
-                <ChefHat className="w-4 h-4 text-orange-500" />
+                <ShieldCheck className="h-4 w-4 text-orange-500" />
               </div>
 
-              <h3 className="font-bold">Truffle Risotto</h3>
+              <h3 className="font-bold text-slate-800">Priority Escalation</h3>
               <p className="text-sm text-slate-500">
-                8 ingredients • 45 min
+                High priority tickets • live monitoring
               </p>
 
-              <div className="text-orange-600 text-sm mt-4">
-                All ingredients available
+              <div className="mt-4 text-sm text-orange-600">
+                All updates stay visible
               </div>
             </div>
 
             {/* Search Bar */}
-            <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 w-[90%] max-w-md">
-              <div className="flex items-center bg-white rounded-2xl shadow-2xl px-4 py-3 border border-orange-100">
-                <Search className="w-5 h-5 text-slate-400" />
+            <div className="absolute left-1/2 -bottom-8 w-[90%] max-w-md -translate-x-1/2">
+              <div className="flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-2xl">
+                <Search className="h-5 w-5 text-slate-400" />
 
                 <input
                   type="text"
-                  placeholder="Search organic vegetables..."
+                  placeholder="Search tickets, users, or statuses..."
                   className="flex-1 px-3 outline-none"
                 />
 
-                <button className="bg-orange-500 p-2 rounded-xl text-white">
-                  <ArrowRight className="w-4 h-4" />
+                <button className="rounded-xl bg-orange-500 p-2 text-white">
+                  <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
+          </div>
+        </section>
 
+        {/* Feature strip */}
+        <section className="grid gap-4 px-4 pb-10 pt-8 sm:px-6 lg:grid-cols-3 lg:px-10">
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-lg shadow-slate-100">
+            <div className="flex items-center gap-3 text-slate-800">
+              <CircleCheckBig className="h-5 w-5 text-orange-400" />
+              <h3 className="text-lg font-semibold">Ticket visibility</h3>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Track open, in-progress, resolved, and closed tickets from a
+              single workspace.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-lg shadow-slate-100">
+            <div className="flex items-center gap-3 text-slate-800">
+              <ShieldCheck className="h-5 w-5 text-emerald-400" />
+              <h3 className="text-lg font-semibold">Role-based access</h3>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Users can submit issues while agents manage assignments and
+              comments.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-lg shadow-slate-100">
+            <div className="flex items-center gap-3 text-slate-800">
+              <Headphones className="h-5 w-5 text-sky-400" />
+              <h3 className="text-lg font-semibold">Fast support flow</h3>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Built for clear communication between customers and support teams.
+            </p>
           </div>
         </section>
       </div>

@@ -49,7 +49,7 @@ const CreateTicket = () => {
 
       await createTicket(formData);
 
-      toast.success("Ticket Created Successfully");
+      toast.success("Ticket Created Successfully",{theme:"dark"});
 
       setFormData({
         category: "",
