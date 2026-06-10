@@ -17,6 +17,8 @@ cd frontend
 npm install
 npm run dev
 
+## Google Drive link for Demo video
+https://drive.google.com/file/d/10bGtKc3WZm2sY56zIuR_iSdQnUuamg1P/view?usp=sharing
 
 ## 🚀 Live Deployment Links
 
